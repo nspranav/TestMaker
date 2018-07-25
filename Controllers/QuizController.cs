@@ -130,7 +130,7 @@ namespace TestMakerFree.Controllers
         /// Deletes the Quiz with the given id
         /// </summary>
         /// <params name="id"> The id of the Quiz to be deleted </params>
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id){
             var quiz = DbContext.Quizzes.Where(q => q.Id == id).FirstOrDefault();
 
@@ -147,7 +147,7 @@ namespace TestMakerFree.Controllers
             DbContext.SaveChanges();
 
             //return anHTTP Status 200 (OK)
-            return new OkResult();
+            return new JsonResult(new{Ok = "Ok"}, new JsonSerializerSettings(){Formatting = Formatting.Indented});
         } 
         #endregion
         [HttpGet("Latest/{num?}")]

@@ -35,6 +35,7 @@ import { QuizEditComponent } from './components/quiz/quiz-edit.component';
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'quiz/create', component: QuizEditComponent },
+            { path: 'quiz/edit/:id', component: QuizEditComponent },
             { path: 'quiz/:id', component: QuizComponent },
             { path: 'login', component: LoginComponent },
             { path: 'about', component: AboutComponent },

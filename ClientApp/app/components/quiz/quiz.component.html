@@ -10,4 +10,8 @@
             <input [(ngModel)]= "quiz.Description" placeholder="Insert a suitable description" />
         </li>
     </ul>
+    <div>
+        <input type="button" value="Edit" (click)="onEdit()" />
+        <input type="button" value="delete" (click)="onDelete()" />
+    </div>
 </div>
