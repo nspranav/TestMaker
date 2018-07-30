@@ -136,36 +136,31 @@ namespace TestMakerFree.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            throw new NotImplementedException();
+            //retrieve the  question
+            var question = DbContext.Questions.Where( q => q.Id == id).FirstOrDefault();
+
+            if(question == null){
+                return NotFound(new{
+                    Error = $"Question Id {id} does not exist"
+                });
+            }
+
+            //remove qquiz from dbcontext
+            DbContext.Questions.Remove(question);
+
+            //save changes to the database
+            DbContext.SaveChanges();
+
+            //return an HTTP Status 200
+            return new OkResult();
         }
         #endregion
         [HttpGet("All/{quizId}")]
         public IActionResult All(int quizId)
         {
-            var sampleQuestions = new List<QuestionViewModel>();
+            var questions = DbContext.Questions.Where(q => q.QuizId == quizId).ToArray();
 
-            sampleQuestions.Add(new QuestionViewModel
-            {
-                Id = 1,
-                QuizId = quizId,
-                Text = "What do you value most in yur life?",
-                CreatedDate = DateTime.Now,
-                LastModifiedDate = DateTime.Now
-            });
-
-            for (int i = 2; i <= 5; i++)
-            {
-                sampleQuestions.Add(new QuestionViewModel
-                {
-                    Id = i,
-                    QuizId = quizId,
-                    Text = $"sample question {i}",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now
-                });
-            }
-
-            return new JsonResult(sampleQuestions, new JsonSerializerSettings { Formatting = Formatting.Indented });
+            return new JsonResult(questions.Adapt<QuestionViewModel[]>(), new JsonSerializerSettings { Formatting = Formatting.Indented });
         }
     }
 }

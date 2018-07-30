@@ -13,6 +13,7 @@ import { AboutComponent } from "./components/about/about.component";
 import { LoginComponent } from './components/login/login.component';
 import { PageNotFoundComponent } from './components/pagenotfound/pagenotfound.component';
 import { QuizEditComponent } from './components/quiz/quiz-edit.component';
+import { QuestionListComponent } from './components/question/question-list.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { QuizEditComponent } from './components/quiz/quiz-edit.component';
         AboutComponent,
         LoginComponent,
         PageNotFoundComponent,
-        QuizEditComponent
+        QuizEditComponent,
+        QuestionListComponent
     ],
     imports: [
         CommonModule,

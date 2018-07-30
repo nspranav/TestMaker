@@ -8,7 +8,8 @@ namespace TestMakerFree.ViewModels
     public class ResultViewModel
     {
         #region Constructor
-        public ResultViewModel(){
+        public ResultViewModel()
+        {
 
         }
         #endregion
@@ -18,6 +19,8 @@ namespace TestMakerFree.ViewModels
         public int QuizId { get; set; }
         public string Text { get; set; }
         public string Notes { get; set; }
+        public int? MinValue { get; set; }
+        public int? MaxValue { get; set; }
         [DefaultValue(0)]
         public int Type { get; set; }
         [DefaultValue(0)]

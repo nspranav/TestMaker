@@ -9,17 +9,10 @@ using TestMakerFree.ViewModels;
 
 namespace TestMakerFree.Controllers
 {
-    [Route("/api/[controller]")]
-    public class QuizController : Controller
+    public class QuizController : BaseApiController
     {
-        #region Private Fields
-        private ApplicationDbContext DbContext;
-        #endregion
         #region Constructor
-        public QuizController(ApplicationDbContext dbContext)
-        {
-            DbContext = dbContext;
-        }
+        public QuizController(ApplicationDbContext dbContext) : base(dbContext) { }
         #endregion Constructor
 
         #region Restful convention method
@@ -30,18 +23,19 @@ namespace TestMakerFree.Controllers
         /// <param name="id"> The id of the quiz</param>
         /// <returns> quiz with the given id</returns>
         [HttpGet("{id}")]
-        public IActionResult Get(int id){
+        public IActionResult Get(int id)
+        {
             var quiz = DbContext.Quizzes.Where(i => i.Id == id).FirstOrDefault();
 
             //handling requests for non-existent quizzes
-            if(quiz == null){
-                return NotFound(new{
+            if (quiz == null)
+            {
+                return NotFound(new
+                {
                     Error = $"Quiz Id {id} is not found"
                 });
             }
-            return new JsonResult(quiz.Adapt<QuizViewModel>(), new JsonSerializerSettings{
-                Formatting = Formatting.Indented
-            });
+            return new JsonResult(quiz.Adapt<QuizViewModel>(), JsonSettings);
         }
 
         /// <summary>
@@ -49,10 +43,11 @@ namespace TestMakerFree.Controllers
         /// </summary>
         /// <params name="m"> The Quiz view model containing the data to insert </params>
         [HttpPut]
-        public IActionResult Put([FromBody]QuizViewModel m){
+        public IActionResult Put([FromBody]QuizViewModel m)
+        {
             //return a generic HTTP Status 500 (server error)
             //if the client payload is invalid
-            if (m ==null) return new StatusCodeResult(500);
+            if (m == null) return new StatusCodeResult(500);
 
             //handle the insert (without object-mapping)
             var quiz = new Quiz();
@@ -70,19 +65,17 @@ namespace TestMakerFree.Controllers
             //Set a temporary author using the Admin user's userId
             //as User login isn't supported yet
             //TODO: add user login
-            quiz.UserId = DbContext.Users.Where( u => u.UserName == "Admin").FirstOrDefault().Id;
+            quiz.UserId = DbContext.Users.Where(u => u.UserName == "Admin").FirstOrDefault().Id;
 
             //add the new quiz
             DbContext.Quizzes.Add(quiz);
 
             //persist the changes into the database
-            DbContext.SaveChanges(); 
+            DbContext.SaveChanges();
 
             //return newly created quiz to the client
             return new JsonResult(quiz.Adapt<QuizViewModel>(),
-            new JsonSerializerSettings{
-                Formatting = Formatting.Indented
-            });
+            JsonSettings);
         }
 
         /// <summary>
@@ -90,17 +83,20 @@ namespace TestMakerFree.Controllers
         /// </summary>
         /// <params name="m">Quiz view model containing the data to update </params>
         [HttpPost]
-        public IActionResult Post([FromBody]QuizViewModel m){
+        public IActionResult Post([FromBody]QuizViewModel m)
+        {
             //return a generic HTTP Status 500 (server Error)
             //if the client payload is invalid.
-            if(m == null) new StatusCodeResult(500);
+            if (m == null) new StatusCodeResult(500);
 
             //retrieve the quiz to edit
-            var quiz = DbContext.Quizzes.Where( q => q.Id == m.Id).FirstOrDefault();
+            var quiz = DbContext.Quizzes.Where(q => q.Id == m.Id).FirstOrDefault();
 
             //handle requests asking for non-existing quizzes
-            if(quiz == null){
-                return NotFound(new{
+            if (quiz == null)
+            {
+                return NotFound(new
+                {
                     Error = $"Quiz ID {m.Id} is not found"
                 });
             }
@@ -109,7 +105,7 @@ namespace TestMakerFree.Controllers
             // by manually assigning the properties, we want to
             //accept from the request
             quiz.Title = m.Title;
-            quiz.Description =m.Description;
+            quiz.Description = m.Description;
             quiz.Text = m.Text;
             quiz.Notes = m.Notes;
 
@@ -121,9 +117,7 @@ namespace TestMakerFree.Controllers
 
             //return the updated quiz to the client
             return new JsonResult(quiz.Adapt<QuizViewModel>(),
-            new JsonSerializerSettings{
-                Formatting = Formatting.Indented
-            }); 
+            JsonSettings);
         }
 
         /// <sumary>
@@ -131,12 +125,15 @@ namespace TestMakerFree.Controllers
         /// </summary>
         /// <params name="id"> The id of the Quiz to be deleted </params>
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id){
+        public IActionResult Delete(int id)
+        {
             var quiz = DbContext.Quizzes.Where(q => q.Id == id).FirstOrDefault();
 
             //handling requests asking for non-existing quizzes
-            if(quiz == null){
-                return NotFound(new{
+            if (quiz == null)
+            {
+                return NotFound(new
+                {
                     Error = $"Quiz ID {id} is not found"
                 });
             }
@@ -147,16 +144,15 @@ namespace TestMakerFree.Controllers
             DbContext.SaveChanges();
 
             //return anHTTP Status 200 (OK)
-            return new JsonResult(new{Ok = "Ok"}, new JsonSerializerSettings(){Formatting = Formatting.Indented});
-        } 
+            return new JsonResult(new { Ok = "Ok" }, JsonSettings);
+        }
         #endregion
         [HttpGet("Latest/{num?}")]
-        public IActionResult Latest(int num=10){
-            var latestQuizzes = DbContext.Quizzes.OrderByDescending(d => d.CreatedDate).Take(num).ToArray(); 
+        public IActionResult Latest(int num = 10)
+        {
+            var latestQuizzes = DbContext.Quizzes.OrderByDescending(d => d.CreatedDate).Take(num).ToArray();
 
-            return new JsonResult(latestQuizzes.Adapt<QuizViewModel[]>(), new JsonSerializerSettings(){
-                Formatting = Formatting.Indented,
-            });
+            return new JsonResult(latestQuizzes.Adapt<QuizViewModel[]>(), JsonSettings);
         }
 
         /// <summary>
@@ -167,15 +163,12 @@ namespace TestMakerFree.Controllers
         /// <returns>{num} Quizzes sorted by Title</returns>
 
         [HttpGet("ByTitle/{num:int?}")]
-        public IActionResult ByTitle(int num =10){
-            var byTitle = DbContext.Quizzes.OrderBy( q => q.Title).Take(num).ToArray();
+        public IActionResult ByTitle(int num = 10)
+        {
+            var byTitle = DbContext.Quizzes.OrderBy(q => q.Title).Take(num).ToArray();
 
             return new JsonResult(
-                byTitle.Adapt<QuizViewModel[]>(),
-                new JsonSerializerSettings(){
-                    Formatting = Formatting.Indented
-                }
-            );
+                byTitle.Adapt<QuizViewModel[]>(),JsonSettings);
         }
 
         /// <summary>
@@ -185,15 +178,14 @@ namespace TestMakerFree.Controllers
         /// <param name="num">The number of quizzes to retrieve</param>
         /// <returns> {num} random Quizzes</returns>
         [HttpGet("Random/{num:int?}")]
-        public IActionResult Random(int num = 10){
+        public IActionResult Random(int num = 10)
+        {
             var random = DbContext.Quizzes.OrderBy(q => Guid.NewGuid()).Take(num).ToArray();
 
             return new JsonResult(
                 random.Adapt<QuizViewModel[]>(),
-                new JsonSerializerSettings(){
-                    Formatting = Formatting.Indented
-                }
-            );  
+                JsonSettings
+            );
         }
     }
 }
