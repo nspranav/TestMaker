@@ -112,29 +112,10 @@ namespace TestMakerFree.Controllers
         } 
         #endregion
         [HttpGet("All/{quizId}")]
-        public IActionResult All(int questionId){
-            var sampleResults = new List<ResultViewModel>();
-            
-            sampleResults.Add(new ResultViewModel{
-                Id = 1,
-                QuizId = questionId,
-                Text ="Friends and Family",
-                CreatedDate = DateTime.Now,
-                LastModifiedDate = DateTime.Now
-            });
+        public IActionResult All(int quizId){
+            var results = DbContext.Results.Where( r => r.QuizId == quizId).ToArray();
 
-            for (int i = 2; i <= 5; i++)
-            {
-                sampleResults.Add(new ResultViewModel{
-                    Id = i,
-                    QuizId = questionId,
-                    Text = $"sample Result {i}",
-                    CreatedDate = DateTime.Now,
-                    LastModifiedDate = DateTime.Now
-                });
-            }
-
-            return new JsonResult(sampleResults, new JsonSerializerSettings{ Formatting = Formatting.Indented});
+            return new JsonResult(results.Adapt<ResultViewModel[]>(), new JsonSerializerSettings{ Formatting = Formatting.Indented});
         }
     }
 }
