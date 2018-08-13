@@ -1,25 +1,31 @@
 <div class="quiz-edit">
     <h2>{{title}}</h2>
-    <div class="form-group">
-        <label for="title">Quiz Title</label>
-        <br />
-        <input type="text" id="title" [(ngModel)]="quiz.Title" placeholder="choose a title..." class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="description">Quiz description:</label>
-        <br>
-        <input type="text" id="description" [(ngModel)]="quiz.Description" placeholder="enter a description..." class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="text">Quiz Text:</label>
-        <br>
-        <textarea class="form-control" id="text" [(ngModel)]="quiz.Text" placeholder="Enter a text..."></textarea> 
-    </div>
-    <div class="form-group commands">
-        <input type="button" *ngIf="editMode" value="Apply Changes" (click)="onSubmit(quiz)" class="btn btn-success">
-        <input type="button" *ngIf="!editMode" value="Apply Changes" (click)="onSubmit(quiz)" class="btn btn-success">
-        <input type="button" *ngIf="!editMode" value="Apply Changes" (click)="onBack()" class="btn btn-success">
-    </div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" >
+        <div class="form-group" [ngClass]="{ 'has-error has-feedback':form.get('Title').errors?.required }" >
+            <label for="title">Quiz Title</label>
+            <br />
+            <input type="text" id="title" formControlName="Title" required [(ngModel)]="quiz.Title" placeholder="choose a title..." class="form-control" />
+            <span *ngIf="form.get('Title').errors?.required" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            <div *ngIf="(form.get('Title').dirty || form.get('Title').touched) && form.get('Title').errors?.required" class="help-block">
+                Title is a required field: please insert a valid title.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description">Quiz description:</label>
+            <br>
+            <input type="text" id="description" formControlName="Description" [(ngModel)]="quiz.Description" placeholder="enter a description..." class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="text">Quiz Text:</label>
+            <br>
+            <textarea class="form-control" id="text" formControlName="Text" [(ngModel)]="quiz.Text" placeholder="Enter a text..."></textarea> 
+        </div>
+        <div class="form-group commands">
+            <button type="submit" *ngIf="editMode" class="btn btn-success" [disabled]="form.invalid">Apply Changes</button>
+            <button type="submit" *ngIf="!editMode" [disabled]="form.invalid" class="btn btn-success">Create the quiz</button>
+            <button type="submit" *ngIf="!editMode"  (click)="onBack()" class="btn btn-default">Cancel</button>
+        </div>
+</form>
     <question-list *ngIf="editMode" [quiz]="quiz"></question-list>
     <result-list *ngIf="editMode" [quiz]="quiz"></result-list>
 </div>
