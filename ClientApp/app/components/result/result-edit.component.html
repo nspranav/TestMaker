@@ -1,24 +1,29 @@
 <h2> {{title}} </h2>
 <div class="result-edit">
-    <div>
-        <label for="text">Result text:</label>
-        <br />
-        <textarea id="text" [(ngModel)]="result.Text" placeholder="enter a suitable text..."></textarea>
-    </div>
-    <div>
-        <label for="MinValue">Minimum score value:</label>
-        <br />
-        <input type="number" id="MinValue" name="MinValue" [(ngModel)]="result.MinValue" />
-        
-    </div>
-    <div>
-        <label for="MaxValue">Maximum Score Value:</label>
-        <br />
-        <input type="number" id="MaxValue" name="MaxValue" [(ngModel)] ="result.MaxValue" />
-    </div>
-    <div>
-        <input *ngIf = "editMode" type="button" value="Apply Changes" (click)="onSubmit(result)" />
-        <input *ngIf="!editMode" type="button" value="Create the result" (click)="onSubmit(result)" />
-        <input type="button" value="Cancel" (click) = "onBack()" />
-    </div>
+    <form [formGroup]="form">
+        <div class="form-group" [ngClass]="{'has-error has-feedback': hasErrors('Text')}">
+            <label for="text">Result text:</label>
+            <br />
+            <textarea id="text" formControlName="Text" placeholder="enter a suitable text..." class="form-control" required></textarea>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error has-feedback': hasErrors('MinValue')}">
+            <label for="MinValue">Minimum score value:</label>
+            <br />
+            <input type="number" id="MinValue" name="MinValue" class="form-control" formControlName="MinValue" required/>
+            <span *ngIf="hasErrors('MinValue')" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            <div *ngIf="hasErrors('MinValue')" class="help-block">Leave it blank or enter a numeric value</div>
+        </div>
+        <div class="form-group" [ngClass]="{'has-error has-feedback': hasErrors('MinValue')}">
+            <label for="MaxValue">Maximum Score Value:</label>
+            <br />
+            <input type="number" id="MaxValue" name="MaxValue" class="form-control" formControlName="MaxValue" required/>
+            <span *ngIf="hasErrors('MaxValue')" class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            <div *ngIf="hasErrors('MaxValue')" class="help-block">Leave it blank or enter a numeric value</div>
+        </div>
+        <div>
+            <button *ngIf = "editMode" type="submit" class="btn btn-success" [disabled]="!form.valid">Apply Cahnges</button>
+            <button *ngIf="!editMode" type="submit" class="btn btn-success" [disabled]="!form.valid">Create the result</button>
+            <button type="submit" class="btn btn-danger" (click)="onBack()">Cancel</button>
+        </div>
+    </form>
 </div>

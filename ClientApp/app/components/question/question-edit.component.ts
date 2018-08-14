@@ -1,7 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router, ActivatedRoute } from "@angular/router";
-import { FormGroup, FormBuilder } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 
 @Component({
     selector: "question-edit",
@@ -25,7 +25,7 @@ export class QuestionEditComponent {
         //create an empty object from the Question interface
         this.question = <Question>{};
         this.form = this.fb.group({
-            Text: ['']
+            Text: ['',Validators.required]
         })
 
         var id = +this.activatedRoute.snapshot.params['id'];
@@ -54,6 +54,7 @@ export class QuestionEditComponent {
         var url = this.baseUrl + "api/question";
 
         if(this.editMode){
+            tempQuestion.Id = this.question.Id;
             this.http.post<Question>(url,tempQuestion).subscribe(res => {
                 var v = res;
                 console.log("Question " + v.Id + "has been updated");

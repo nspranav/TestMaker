@@ -4,12 +4,13 @@
         <div class="form-group">
             <label for="text">Question Text:</label>
             <br />
-            <textarea formControlName="Text" class="form-control" placeholder="enter a suitable text..." id="text"></textarea>
+            <textarea formControlName="Text" class="form-control" placeholder="enter a suitable text..." id="text" required></textarea>
+            <span class="glyphicon glyphicon-remove form-control-feedback" *ngIf="!(form.get('Text').valid)" aria-hidden="true"></span>
         </div>
         <div>
-            <button type="submit" (click)="onSubmit()"  *ngIf="editMode" class="btn btn-success" [disabled]="!form.touched">Apply Changes</button>
-            <input type="button" (click)="onSubmit(question)" value="Create a new Question" *ngIf="!editMode" />
-            <input type="button" (click)="onBack()" value="Cancel" />
+            <button type="submit" (click)="onSubmit()"  *ngIf="editMode" class="btn btn-success" [disabled]="form.touched && form.get('Text').errors?.required">Apply Changes</button>
+            <button type="submit" (click)="onSubmit()" *ngIf="!editMode" class="btn btn-success" [disabled]="form.get('Text').errors?.required">Create a new Question</button>
+            <button type="submit" (click)="onBack()" class="btn btn-danger" >Cancel</button>
         </div>
 </form>
 </div>
