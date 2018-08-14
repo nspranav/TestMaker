@@ -116,4 +116,10 @@ export class QuizEditComponent {
         var e = this.form.get(name);
         return e && (e.dirty || e.touched);
     }
+
+    //returns true if the FormControl is invalid aftter user has made changes
+    hasErrors(name:string){
+        var e = this.form.get(name);
+        return e && (e.dirty || e.touched) && !e.valid;
+    }
 }
