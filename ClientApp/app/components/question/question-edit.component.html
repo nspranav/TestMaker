@@ -15,3 +15,20 @@
 </form>
 </div>
 <answer-list *ngIf="editMode" [question]="question"></answer-list>
+<div class="panel panel-info" style="margin-top: 20px;">
+    <div class="panel-info">Form debug info:</div>
+    <div class="panel-body">
+        <p><strong>Form Value:</strong></p>
+        <div class="help-block">
+            {{form.value | json}}
+        </div>
+        <p><strong>Form Status:</strong></p>
+        <div class="help-block">
+            {{form.status | json}}
+        </div>
+        <p><strong>Form activity Log:</strong></p>
+        <div class="help-block">
+            <span *ngIf="activityLog" [innerHTML]="activityLog"></span>
+        </div>
+    </div>
+</div>

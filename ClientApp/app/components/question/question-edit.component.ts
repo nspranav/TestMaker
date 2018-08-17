@@ -12,6 +12,7 @@ export class QuestionEditComponent {
     title: string;
     question: Question;
     form: FormGroup;
+    activityLog: string;
     //this will be true when editing an existing question and false when 
     //creating anew one
     editMode: boolean;
@@ -24,9 +25,7 @@ export class QuestionEditComponent {
     {
         //create an empty object from the Question interface
         this.question = <Question>{};
-        this.form = this.fb.group({
-            Text: ['',Validators.required]
-        })
+        this.createForm();
 
         var id = +this.activatedRoute.snapshot.params['id'];
         //check if we are in edit mode or not
@@ -38,6 +37,7 @@ export class QuestionEditComponent {
             this.http.get<Question>(url).subscribe(q => {
                 this.question = q;
                 this.title = "Edit - " + this.question.Text;
+                this.updateForm();
             }, error => console.error(error)
             );
         }
@@ -45,6 +45,43 @@ export class QuestionEditComponent {
             this.question.QuizId = id;
             this.title = "Create a new question"
         }
+    }
+    
+    createForm(){
+        this.form = this.fb.group({
+            Text: ['',Validators.required]
+        });
+
+        this.activityLog = '';
+        this.log('Form has beed initiated.');
+
+        //react to the form changes
+        this.form.valueChanges.subscribe(val => {
+            if(!this.form.dirty){
+                this.log("Form model has been loaded");
+            }else{
+                this.log("form was updated by the user.");
+            }
+        });
+
+        this.form.get("Text")!.valueChanges.subscribe(val => {
+            if(!this.form.dirty){
+                this.log("Text control has been loaded with initial controls");
+
+            }else{
+                this.log("Text control was updated by the user.");
+            }
+        });
+    }
+
+    updateForm(){
+        this.form.setValue({
+            Text: this.question.Text
+        });
+    }
+
+    log(str:string){
+        this.activityLog+= "["+new Date().toLocaleString() + "] "+str+"<br />";
     }
 
     onSubmit(question:Question){
