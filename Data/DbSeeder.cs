@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace TestMakerFree.Data
@@ -8,7 +9,8 @@ namespace TestMakerFree.Data
     public static class DbSeeder
     {
         #region Public Methods
-        public static void Seed(ApplicationDbContext dbContext)
+        public static void Seed(ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager,
+                    UserManager<ApplicationUser> userManager)
         {
             //create default users if there are none
             if (!dbContext.Users.Any())

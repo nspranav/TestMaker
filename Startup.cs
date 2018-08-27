@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +32,17 @@ namespace TestMakerFree
 
             //Add ApplicationDbContext
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Add ASP .NET Identity support
+            services.AddIdentity<ApplicationUser,IdentityRole>(
+                opts => {
+                    opts.Password.RequireDigit = true;
+                    opts.Password.RequireLowercase =true;
+                    opts.Password.RequireUppercase = true;
+                    opts.Password.RequireNonAlphanumeric = true;
+                    opts.Password.RequiredLength = 7;
+                }
+            ).AddEntityFrameworkStores<ApplicationDbContext>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,12 +84,14 @@ namespace TestMakerFree
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+                var userManager = serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
 
                 //create the db if it doesn't exist and apply any pending migration
                 dbContext.Database.Migrate();
 
                 //seed the Db,.
-                DbSeeder.Seed(dbContext);
+                DbSeeder.Seed(dbContext, roleManager, userManager);
             }
         }
     }
