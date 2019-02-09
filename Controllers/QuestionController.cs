@@ -2,26 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using TestMakerFree.Data;
 using TestMakerFree.ViewModels;
 
 namespace TestMakerFree.Controllers
 {
-    [Route("api/[controller]")]
-    public class QuestionController : Controller
+    public class QuestionController : BaseApiController
     {
-        #region Private Fields
-        private ApplicationDbContext DbContext;
-        #endregion
+        // #region Private Fields
+        // private ApplicationDbContext DbContext;
+        // #endregion
 
         #region Constructor
-        public QuestionController(ApplicationDbContext dbContext)
-        {
-            DbContext = dbContext;
-        }
+        public QuestionController(ApplicationDbContext dbContext,
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            IConfiguration configuration):base(dbContext, roleManager, userManager, configuration){}
         #endregion
+        
         #region Restful conventions methods
         /// <summary>
         /// Retrieves the Question with the given {id}

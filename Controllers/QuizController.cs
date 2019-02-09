@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using TestMakerFree.Data;
 using TestMakerFree.ViewModels;
@@ -12,7 +14,10 @@ namespace TestMakerFree.Controllers
     public class QuizController : BaseApiController
     {
         #region Constructor
-        public QuizController(ApplicationDbContext dbContext) : base(dbContext) { }
+        public QuizController(ApplicationDbContext dbContext,
+            RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
+            IConfiguration configuration) : base(dbContext, roleManager, userManager, configuration) { }
         #endregion Constructor
 
         #region Restful convention method
